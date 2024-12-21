@@ -26,4 +26,8 @@ public interface ClienteAPI {
     @GetMapping("/buscaTodosClientes")
     @ResponseStatus(code = HttpStatus.OK)
     List<ClienteListResponse> buscaTodosClientes();
+
+    @DeleteMapping(value = "/deleta/{idCliente}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    void deletaCliente(@PathVariable UUID idCliente);
 }

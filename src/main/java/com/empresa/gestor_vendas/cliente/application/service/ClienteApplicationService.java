@@ -48,6 +48,14 @@ public class ClienteApplicationService implements ClienteService {
         return ClienteListResponse.converte(clientes);
     }
 
+    @Override
+    public void deletaCliente(UUID idCliente) {
+        log.info("[start] ClienteApplicationService - deletaCliente");
+        buscaCliente(idCliente);
+        clienteRepository.deletaCliente(idCliente);
+        log.info("[finish] ClienteApplicationService - deletaCliente");
+    }
+
     //Metodo para impedir a duplicidade de um Cliente
     private void verificaEmail(@NotBlank @Email String email) {
         List<Cliente> clientes = clienteRepository.buscaClientePorEmail(email);

@@ -10,6 +10,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,5 +51,12 @@ public class ClienteInfraRepository implements ClienteRepository {
         List<Cliente> clientes = clienteSpringDataJPARepository.findAll();
        log.info("[finish] ClienteInfraRepository - buscaTodosClientes");
         return clientes;
+    }
+
+    @Override
+    public void deletaCliente(UUID idCliente) {
+        log.info("[start] ClienteInfraRepository - deletaCliente");
+        clienteSpringDataJPARepository.deleteById((idCliente));
+        log.info("[finish] ClienteInfraRepository - deletaCliente");
     }
 }

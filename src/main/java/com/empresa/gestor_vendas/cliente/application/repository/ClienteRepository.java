@@ -12,4 +12,5 @@ public interface ClienteRepository {
     Cliente buscaCliente(UUID idCliente);
     List<Cliente> buscaClientePorEmail(@NotBlank @Email String email);
     List<Cliente> buscaTodosClientes();
+    void deletaCliente(UUID idCliente);
 }
