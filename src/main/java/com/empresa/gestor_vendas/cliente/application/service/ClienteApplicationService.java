@@ -1,6 +1,7 @@
 package com.empresa.gestor_vendas.cliente.application.service;
 
 import com.empresa.gestor_vendas.cliente.application.api.dto.ClienteDetalhadoResponse;
+import com.empresa.gestor_vendas.cliente.application.api.dto.ClienteListResponse;
 import com.empresa.gestor_vendas.cliente.application.api.dto.ClienteRequest;
 import com.empresa.gestor_vendas.cliente.application.api.dto.ClienteResponse;
 import com.empresa.gestor_vendas.cliente.application.repository.ClienteRepository;
@@ -37,6 +38,14 @@ public class ClienteApplicationService implements ClienteService {
         Cliente cliente = clienteRepository.buscaCliente(idCliente);
         log.info("[finish] ClienteApplicationService - buscaCliente");
         return new ClienteDetalhadoResponse(cliente);
+    }
+
+    @Override
+    public List<ClienteListResponse> buscaTodosClientes() {
+        log.info("[start] ] - buscaTodosClientes");
+        List<Cliente> clientes = clienteRepository.buscaTodosClientes();
+        log.info("[finish] ] - buscaTodosClientes");
+        return ClienteListResponse.converte(clientes);
     }
 
     //Metodo para impedir a duplicidade de um Cliente
