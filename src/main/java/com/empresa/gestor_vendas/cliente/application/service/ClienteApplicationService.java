@@ -1,5 +1,6 @@
 package com.empresa.gestor_vendas.cliente.application.service;
 
+import com.empresa.gestor_vendas.cliente.application.api.dto.ClienteDetalhadoResponse;
 import com.empresa.gestor_vendas.cliente.application.api.dto.ClienteRequest;
 import com.empresa.gestor_vendas.cliente.application.api.dto.ClienteResponse;
 import com.empresa.gestor_vendas.cliente.application.repository.ClienteRepository;
@@ -7,6 +8,8 @@ import com.empresa.gestor_vendas.cliente.domain.Cliente;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 @Log4j2
@@ -20,5 +23,12 @@ public class ClienteApplicationService implements ClienteService {
         Cliente clienteCriado = clienteRepository.salvaCliente(new Cliente(clienteRequest));
         log.info("[finish] ClienteApplicationService - cadastraCliente");
         return new ClienteResponse(clienteCriado);
+    }
+
+    @Override
+    public ClienteDetalhadoResponse buscaCliente(UUID idCliente) {
+        log.info("[start] ClienteApplicationService - buscaCliente");
+        log.info("[finish] ClienteApplicationService - buscaCliente");
+        return null;
     }
 }
