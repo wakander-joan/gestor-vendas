@@ -41,9 +41,17 @@ public class Cliente {
     }
 
     public void edita(ClienteEditaRequest clienteEditaRequest) {
-        this.nome = clienteEditaRequest.getNome();
-        this.email = clienteEditaRequest.getEmail();
-        this.limiteCompra = clienteEditaRequest.getLimiteCompra();
-        this.diaFechamento = clienteEditaRequest.getDiaFechamento();
+        if (clienteEditaRequest.getNome() != null) {
+            this.nome = clienteEditaRequest.getNome();
+        }
+        if (clienteEditaRequest.getEmail() != null) {
+            this.email = clienteEditaRequest.getEmail();
+        }
+        if (clienteEditaRequest.getLimiteCompra() != null) {
+            this.limiteCompra = clienteEditaRequest.getLimiteCompra();
+        }
+        if (clienteEditaRequest.getDiaFechamento() != null) {
+            this.diaFechamento = clienteEditaRequest.getDiaFechamento();
+        }
     }
 }
