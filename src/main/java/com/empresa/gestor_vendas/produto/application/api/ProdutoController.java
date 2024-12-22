@@ -1,9 +1,6 @@
 package com.empresa.gestor_vendas.produto.application.api;
 
-import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoDetalhadoResponse;
-import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoListResponse;
-import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoRequest;
-import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoResponse;
+import com.empresa.gestor_vendas.produto.application.api.dto.*;
 import com.empresa.gestor_vendas.produto.application.service.ProdutoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -47,5 +44,12 @@ public class ProdutoController implements ProdutoAPI {
         log.info("[start] ProdutoController - deletaProduto");
         produtoService.deletaProduto(idProduto);
         log.info("[finish] ProdutoController - deletaProduto");
+    }
+
+    @Override
+    public void editaProduto(ProdutoEditaRequest produtoEditaRequest, Integer idProduto) {
+        log.info("[start] ProdutoController - editaProduto");
+        produtoService.editaProduto(produtoEditaRequest, idProduto);
+        log.info("[finish] ProdutoController - editaProduto");
     }
 }

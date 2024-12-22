@@ -1,5 +1,6 @@
 package com.empresa.gestor_vendas.produto.domain;
 
+import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoEditaRequest;
 import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoRequest;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -30,7 +31,19 @@ public class Produto {
 
     public Produto(ProdutoRequest produtoRequest) {
         this.descricao = produtoRequest.getDescricao();
-        this.preco = produtoRequest.getPrecoProduto();
+        this.preco = produtoRequest.getPreco();
         this.estoque = produtoRequest.getEstoque();
+    }
+
+    public void edita(ProdutoEditaRequest produtoEditaRequest) {
+        if (produtoEditaRequest.getDescricao() != null) {
+            this.descricao = produtoEditaRequest.getDescricao();
+        }
+        if (produtoEditaRequest.getPreco() != null) {
+            this.preco = produtoEditaRequest.getPreco();
+        }
+        if (produtoEditaRequest.getEstoque() != null) {
+            this.estoque = produtoEditaRequest.getEstoque();
+        }
     }
 }

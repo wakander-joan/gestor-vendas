@@ -1,9 +1,6 @@
 package com.empresa.gestor_vendas.produto.application.service;
 
-import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoDetalhadoResponse;
-import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoListResponse;
-import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoRequest;
-import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoResponse;
+import com.empresa.gestor_vendas.produto.application.api.dto.*;
 import com.empresa.gestor_vendas.produto.application.repository.ProdutoRepository;
 import com.empresa.gestor_vendas.produto.domain.Produto;
 import lombok.RequiredArgsConstructor;
@@ -49,5 +46,14 @@ public class ProdutoApplicationService implements ProdutoService {
         produtoRepository.buscaProduto(idProduto);
         produtoRepository.deletaProduto(idProduto);
         log.info("[finish] ProdutoApplicationService - deletaProduto");
+    }
+
+    @Override
+    public void editaProduto(ProdutoEditaRequest produtoEditaRequest, Integer idProduto) {
+        log.info("[start] ProdutoApplicationService - editaProduto");
+        Produto produto =produtoRepository.buscaProduto(idProduto);
+        produto.edita(produtoEditaRequest);
+        produtoRepository.salvaProduto(produto);
+        log.info("[finish] ProdutoApplicationService - editaProduto");
     }
 }

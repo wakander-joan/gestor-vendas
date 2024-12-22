@@ -1,15 +1,11 @@
 package com.empresa.gestor_vendas.produto.application.api;
 
-import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoDetalhadoResponse;
-import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoListResponse;
-import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoRequest;
-import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoResponse;
+import com.empresa.gestor_vendas.produto.application.api.dto.*;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/produto")
@@ -30,5 +26,9 @@ public interface ProdutoAPI {
     @DeleteMapping(value = "/deletaProduto/{idProduto}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     void deletaProduto(@PathVariable Integer idProduto);
+
+    @PatchMapping("/editaProduto/{idProduto}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    void editaProduto(@Valid @RequestBody ProdutoEditaRequest produtoEditaRequest, @PathVariable Integer idProduto);
 
 }
