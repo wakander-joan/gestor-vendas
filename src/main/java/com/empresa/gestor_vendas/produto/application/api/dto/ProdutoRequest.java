@@ -12,8 +12,6 @@ import java.math.BigDecimal;
 @ToString
 public class ProdutoRequest {
     @NotBlank
-    private String nomeProduto;
-    @NotBlank
     private String descricao;
     @NotNull
     private BigDecimal precoProduto;

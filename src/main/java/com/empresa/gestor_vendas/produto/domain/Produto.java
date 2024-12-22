@@ -1,5 +1,6 @@
 package com.empresa.gestor_vendas.produto.domain;
 
+import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoRequest;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -27,4 +28,9 @@ public class Produto {
     @Min(0)
     private Integer estoque;
 
+    public Produto(ProdutoRequest produtoRequest) {
+        this.descricao = produtoRequest.getDescricao();
+        this.preco = produtoRequest.getPrecoProduto();
+        this.estoque = produtoRequest.getEstoque();
+    }
 }
