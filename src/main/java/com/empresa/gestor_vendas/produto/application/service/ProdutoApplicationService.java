@@ -11,6 +11,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Log4j2
@@ -40,5 +41,13 @@ public class ProdutoApplicationService implements ProdutoService {
         List<Produto> produtos =produtoRepository.buscaTodosProduto();
         log.info("[finish] ProdutoApplicationService - buscaTodosProduto");
         return ProdutoListResponse.converte(produtos);
+    }
+
+    @Override
+    public void deletaProduto(Integer idProduto) {
+        log.info("[start] ProdutoApplicationService - deletaProduto");
+        produtoRepository.buscaProduto(idProduto);
+        produtoRepository.deletaProduto(idProduto);
+        log.info("[finish] ProdutoApplicationService - deletaProduto");
     }
 }

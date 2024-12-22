@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/produto")
@@ -25,5 +26,9 @@ public interface ProdutoAPI {
     @GetMapping("/buscaTodosProduto")
     @ResponseStatus(code = HttpStatus.OK)
     List<ProdutoListResponse> buscaTodosProduto();
+
+    @DeleteMapping(value = "/deletaProduto/{idProduto}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    void deletaProduto(@PathVariable Integer idProduto);
 
 }

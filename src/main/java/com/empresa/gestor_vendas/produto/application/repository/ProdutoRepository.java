@@ -8,4 +8,5 @@ public interface ProdutoRepository {
     Produto salvaProduto(Produto produto);
     Produto buscaProduto(Integer idProduto);
     List<Produto> buscaTodosProduto();
+    void deletaProduto(Integer idProduto);
 }
