@@ -1,0 +1,28 @@
+server:
+  servlet:
+    context-path: /gestor-vendas/api
+
+spring:
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/postgres?currentSchema=gestor-vendas}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      poolName: SpringBootJPAHikariCP
+      minimumIdle: 20
+      maximumPoolSize: 200
+      connectionTimeout: 30000
+      idleTimeout: 30000
+      maxLifetime: 2000000
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      properties:
+        hibernate:
+          default_schema: gestor-vendas
