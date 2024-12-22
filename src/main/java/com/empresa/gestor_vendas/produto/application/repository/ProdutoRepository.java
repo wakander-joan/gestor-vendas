@@ -4,4 +4,5 @@ import com.empresa.gestor_vendas.produto.domain.Produto;
 
 public interface ProdutoRepository {
     Produto salvaProduto(Produto produto);
+    Produto buscaProduto(Integer idProduto);
 }

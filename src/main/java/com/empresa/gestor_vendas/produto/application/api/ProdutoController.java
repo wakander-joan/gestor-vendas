@@ -1,5 +1,6 @@
 package com.empresa.gestor_vendas.produto.application.api;
 
+import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoDetalhadoResponse;
 import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoRequest;
 import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoResponse;
 import com.empresa.gestor_vendas.produto.application.service.ProdutoService;
@@ -18,6 +19,14 @@ public class ProdutoController implements ProdutoAPI {
         log.info("[start] ProdutoController - cadastraProduto");
         ProdutoResponse produto = produtoService.cadastraProduto(produtoRequest);
         log.info("[finish] ProdutoController - cadastraProduto");
+        return produto;
+    }
+
+    @Override
+    public ProdutoDetalhadoResponse buscaProduto(Integer idProduto) {
+        log.info("[start] ProdutoController - getProduto");
+        ProdutoDetalhadoResponse produto = produtoService.buscaProduto(idProduto);
+        log.info("[finish] ProdutoController - getProduto");
         return produto;
     }
 }

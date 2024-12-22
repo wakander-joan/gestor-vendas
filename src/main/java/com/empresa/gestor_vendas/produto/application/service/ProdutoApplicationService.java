@@ -1,5 +1,6 @@
 package com.empresa.gestor_vendas.produto.application.service;
 
+import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoDetalhadoResponse;
 import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoRequest;
 import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoResponse;
 import com.empresa.gestor_vendas.produto.application.repository.ProdutoRepository;
@@ -20,5 +21,13 @@ public class ProdutoApplicationService implements ProdutoService {
         Produto produto = produtoRepository.salvaProduto(new Produto(produtoRequest));
         log.info("[finish] ProdutoApplicationService - cadastraProduto");
         return new ProdutoResponse(produto);
+    }
+
+    @Override
+    public ProdutoDetalhadoResponse buscaProduto(Integer idProduto) {
+        log.info("[start] ProdutoApplicationService - getProduto");
+        Produto produto = produtoRepository.buscaProduto(idProduto);
+        log.info("[finish] ProdutoApplicationService - getProduto");
+        return new ProdutoDetalhadoResponse(produto);
     }
 }
