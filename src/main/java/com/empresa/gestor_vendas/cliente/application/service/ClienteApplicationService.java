@@ -57,6 +57,7 @@ public class ClienteApplicationService implements ClienteService {
     public void editaCliente(ClienteEditaRequest clienteEditaRequest, UUID idCliente) {
         log.info("[start] ClienteApplicationService - editaCliente");
         Cliente cliente = clienteRepository.buscaCliente(idCliente);
+        verificaEmail(clienteEditaRequest.getEmail());
         cliente.edita(clienteEditaRequest);
         clienteRepository.salvaCliente(cliente);
         log.info("[finish] ClienteApplicationService - editaCliente");
