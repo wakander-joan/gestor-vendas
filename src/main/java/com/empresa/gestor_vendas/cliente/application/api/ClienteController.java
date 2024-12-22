@@ -49,6 +49,7 @@ public class ClienteController implements ClienteAPI {
     @Override
     public void editaCliente(ClienteEditaRequest clienteEditaRequest, UUID idCliente) {
         log.info("[start] ClienteController - editaCliente");
+        clienteService.editaCliente(idCliente);
         log.info("[finish] ClienteController - editaCliente");
     }
 }

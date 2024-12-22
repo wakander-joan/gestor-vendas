@@ -56,6 +56,12 @@ public class ClienteApplicationService implements ClienteService {
         log.info("[finish] ClienteApplicationService - deletaCliente");
     }
 
+    @Override
+    public void editaCliente(UUID idCliente) {
+        log.info("[start] ClienteApplicationService - editaCliente");
+        log.info("[finish] ClienteApplicationService - editaCliente");
+    }
+
     //Metodo para impedir a duplicidade de um Cliente
     private void verificaEmail(@NotBlank @Email String email) {
         List<Cliente> clientes = clienteRepository.buscaClientePorEmail(email);
