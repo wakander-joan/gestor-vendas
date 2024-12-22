@@ -1,9 +1,6 @@
 package com.empresa.gestor_vendas.cliente.application.api;
 
-import com.empresa.gestor_vendas.cliente.application.api.dto.ClienteDetalhadoResponse;
-import com.empresa.gestor_vendas.cliente.application.api.dto.ClienteListResponse;
-import com.empresa.gestor_vendas.cliente.application.api.dto.ClienteRequest;
-import com.empresa.gestor_vendas.cliente.application.api.dto.ClienteResponse;
+import com.empresa.gestor_vendas.cliente.application.api.dto.*;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +24,11 @@ public interface ClienteAPI {
     @ResponseStatus(code = HttpStatus.OK)
     List<ClienteListResponse> buscaTodosClientes();
 
-    @DeleteMapping(value = "/deleta/{idCliente}")
+    @DeleteMapping(value = "/deletaCliente/{idCliente}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     void deletaCliente(@PathVariable UUID idCliente);
+
+    @PatchMapping("/editaCliente/{idCliente}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    void editaCliente(@Valid @RequestBody ClienteEditaRequest clienteEditaRequest, @PathVariable UUID idCliente);
 }

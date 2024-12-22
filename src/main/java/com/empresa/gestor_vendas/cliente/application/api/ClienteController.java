@@ -1,9 +1,6 @@
 package com.empresa.gestor_vendas.cliente.application.api;
 
-import com.empresa.gestor_vendas.cliente.application.api.dto.ClienteDetalhadoResponse;
-import com.empresa.gestor_vendas.cliente.application.api.dto.ClienteListResponse;
-import com.empresa.gestor_vendas.cliente.application.api.dto.ClienteRequest;
-import com.empresa.gestor_vendas.cliente.application.api.dto.ClienteResponse;
+import com.empresa.gestor_vendas.cliente.application.api.dto.*;
 import com.empresa.gestor_vendas.cliente.application.service.ClienteService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -47,5 +44,11 @@ public class ClienteController implements ClienteAPI {
         log.info("[start] ClienteController - deletaCliente");
         clienteService.deletaCliente(idCliente);
         log.info("[finish] ClienteController - deletaCliente");
+    }
+
+    @Override
+    public void editaCliente(ClienteEditaRequest clienteEditaRequest, UUID idCliente) {
+        log.info("[start] ClienteController - editaCliente");
+        log.info("[finish] ClienteController - editaCliente");
     }
 }
