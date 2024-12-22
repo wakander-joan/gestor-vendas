@@ -8,6 +8,8 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @Log4j2
 @RequiredArgsConstructor
@@ -24,10 +26,18 @@ public class ProdutoInfraRepository implements ProdutoRepository {
 
     @Override
     public Produto buscaProduto(Integer idProduto) {
-        log.info("[start] ProdutoInfraRepository - getProduto");
+        log.info("[start] ProdutoInfraRepository - buscaProduto");
         Produto produto = produtoSpringDataJPARepository.findById(idProduto)
                 .orElseThrow(() -> APIException.build(HttpStatus.NOT_FOUND, "Produto não encontrado"));
-        log.info("[finish] ProdutoInfraRepository - getProduto");
+        log.info("[finish] ProdutoInfraRepository - buscaProduto");
         return produto;
+    }
+
+    @Override
+    public List<Produto> buscaTodosProduto() {
+        log.info("[start] ProdutoInfraRepository - buscaTodosProduto");
+        List<Produto> produtos = produtoSpringDataJPARepository.findAll();
+        log.info("[finish] ProdutoInfraRepository - buscaTodosProduto");
+        return produtos;
     }
 }
