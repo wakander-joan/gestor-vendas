@@ -1,5 +1,6 @@
 package com.empresa.gestor_vendas.cliente.domain;
 
+import com.empresa.gestor_vendas.cliente.application.api.dto.ClienteEditaRequest;
 import com.empresa.gestor_vendas.cliente.application.api.dto.ClienteRequest;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -37,5 +38,12 @@ public class Cliente {
         this.email = clienteRequest.getEmail();
         this.limiteCompra = clienteRequest.getLimiteCompra();
         this.diaFechamento = clienteRequest.getDiaFechamento();
+    }
+
+    public void edita(ClienteEditaRequest clienteEditaRequest) {
+        this.nome = clienteEditaRequest.getNome();
+        this.email = clienteEditaRequest.getEmail();
+        this.limiteCompra = clienteEditaRequest.getLimiteCompra();
+        this.diaFechamento = clienteEditaRequest.getDiaFechamento();
     }
 }

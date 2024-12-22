@@ -1,9 +1,6 @@
 package com.empresa.gestor_vendas.cliente.application.service;
 
-import com.empresa.gestor_vendas.cliente.application.api.dto.ClienteDetalhadoResponse;
-import com.empresa.gestor_vendas.cliente.application.api.dto.ClienteListResponse;
-import com.empresa.gestor_vendas.cliente.application.api.dto.ClienteRequest;
-import com.empresa.gestor_vendas.cliente.application.api.dto.ClienteResponse;
+import com.empresa.gestor_vendas.cliente.application.api.dto.*;
 import com.empresa.gestor_vendas.cliente.application.repository.ClienteRepository;
 import com.empresa.gestor_vendas.cliente.domain.Cliente;
 import com.empresa.gestor_vendas.handler.APIException;
@@ -57,8 +54,11 @@ public class ClienteApplicationService implements ClienteService {
     }
 
     @Override
-    public void editaCliente(UUID idCliente) {
+    public void editaCliente(ClienteEditaRequest clienteEditaRequest, UUID idCliente) {
         log.info("[start] ClienteApplicationService - editaCliente");
+        Cliente cliente = clienteRepository.buscaCliente(idCliente);
+        cliente.edita(clienteEditaRequest);
+        clienteRepository.salvaCliente(cliente);
         log.info("[finish] ClienteApplicationService - editaCliente");
     }
 
