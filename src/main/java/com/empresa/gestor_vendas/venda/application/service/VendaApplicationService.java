@@ -52,6 +52,8 @@ public class VendaApplicationService implements VendaService {
         return new VendaResponse(vendaCriada);
     }
 
+    //< - Verificações - >
+
     private void verificaVendasAbertas(@NotNull UUID idCliente) {
         List<Venda> vendas = vendaRepository.buscaVendasCliente(idCliente);
         boolean existeVendaAberta = vendas.stream()
@@ -74,6 +76,7 @@ public class VendaApplicationService implements VendaService {
 
     public void verificaEstoqueItens(VendaRequest vendaRequest) {
         log.info("[start] VendaApplicationService - verificaEstoqueItens");
+
         boolean quantidadeInvalidaItem = vendaRequest.getItens().stream()
                 .anyMatch(item -> item.getQuantidade() <= 0);
         if (quantidadeInvalidaItem) {
@@ -105,12 +108,9 @@ public class VendaApplicationService implements VendaService {
         });
 
         boolean todosItensDisponiveis = itensResposta.stream().allMatch(EstoqueItemResponse::isTemEstoqueSuficiente);
-
         String mensagemFinal = todosItensDisponiveis
                 ? "Todos os itens possuem estoque suficiente."
                 : "Um ou mais itens não possuem estoque suficiente.";
-
-
         log.info("[finish] VendaApplicationService - verificaEstoqueItens");
     }
 
@@ -198,5 +198,4 @@ public class VendaApplicationService implements VendaService {
         log.info("[finish] VendaApplicationService - calculaProximoFechamento");
         return proximoFechamento;
     }
-
 }

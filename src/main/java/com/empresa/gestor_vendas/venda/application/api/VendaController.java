@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.UUID;
+
 @RestController
 @Log4j2
 @RequiredArgsConstructor
@@ -19,5 +21,11 @@ public class VendaController implements VendaAPI {
         VendaResponse venda = vendaService.abreVenda(vendaRequest);
         log.info("[finish] VendaController - abreVenda");
         return venda;
+    }
+
+    @Override
+    public void fechaVenda(UUID idVenda) {
+        log.info("[start] VendaController - fechaVenda");
+        log.info("[finish] VendaController - fechaVenda");
     }
 }
