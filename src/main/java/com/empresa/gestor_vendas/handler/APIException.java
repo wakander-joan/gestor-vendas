@@ -1,12 +1,11 @@
 package com.empresa.gestor_vendas.handler;
 
-import java.util.Optional;
-
+import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import lombok.Getter;
-import lombok.extern.log4j.Log4j2;
+import java.util.Optional;
 
 @Getter
 @Log4j2
