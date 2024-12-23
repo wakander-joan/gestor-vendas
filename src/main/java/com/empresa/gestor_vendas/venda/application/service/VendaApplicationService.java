@@ -52,6 +52,15 @@ public class VendaApplicationService implements VendaService {
         return new VendaResponse(vendaCriada);
     }
 
+    @Override
+    public void fechaVenda(UUID idVenda) {
+        log.info("[start] VendaApplicationService - fechaVenda");
+        Venda venda = vendaRepository.buscaVenda(idVenda);
+        venda.fecha();
+        vendaRepository.salva(venda);
+        log.info("[finish] VendaApplicationService - fechaVenda");
+    }
+
     //< - Verificações - >
 
     private void verificaVendasAbertas(@NotNull UUID idCliente) {

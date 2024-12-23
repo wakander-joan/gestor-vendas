@@ -8,4 +8,5 @@ import java.util.UUID;
 public interface VendaRepository {
     List<Venda> buscaVendasCliente(UUID idCliente);
     void salva(Venda vendaCriada);
+    Venda buscaVenda(UUID idVenda);
 }

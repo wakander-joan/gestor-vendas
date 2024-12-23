@@ -54,4 +54,7 @@ public class Venda {
         return venda;
     }
 
+    public void fecha() {
+        this.statusVenda = StatusVenda.FECHADA;
+    }
 }

@@ -26,6 +26,7 @@ public class VendaController implements VendaAPI {
     @Override
     public void fechaVenda(UUID idVenda) {
         log.info("[start] VendaController - fechaVenda");
+        vendaService.fechaVenda(idVenda);
         log.info("[finish] VendaController - fechaVenda");
     }
 }
