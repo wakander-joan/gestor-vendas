@@ -3,6 +3,7 @@ package com.empresa.gestor_vendas.venda.domain;
 import com.empresa.gestor_vendas.venda.application.api.dto.VendaRequest;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -67,5 +68,14 @@ public class Venda {
 
     public void atualizaTotal(@NotNull BigDecimal preco) {
         this.valorTotal = valorTotal.add(preco);
+    }
+
+    public void removeItem(ItemVenda item) {
+        itens.remove(item);
+    }
+
+    public void atualizaTotalSubtraindo(@NotNull BigDecimal preco, @Min(value = 1, message = "A quantidade deve ser no mínimo 1") Integer quantidadeRemovida) {
+        BigDecimal valorSubtraido = preco.multiply(BigDecimal.valueOf(quantidadeRemovida));
+        this.valorTotal = this.valorTotal.subtract(valorSubtraido);
     }
 }

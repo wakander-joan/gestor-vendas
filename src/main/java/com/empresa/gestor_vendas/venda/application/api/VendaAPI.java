@@ -1,9 +1,6 @@
 package com.empresa.gestor_vendas.venda.application.api;
 
-import com.empresa.gestor_vendas.venda.application.api.dto.AddItemVendaRequest;
-import com.empresa.gestor_vendas.venda.application.api.dto.ItemVendaRequets;
-import com.empresa.gestor_vendas.venda.application.api.dto.VendaRequest;
-import com.empresa.gestor_vendas.venda.application.api.dto.VendaResponse;
+import com.empresa.gestor_vendas.venda.application.api.dto.*;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -25,5 +22,9 @@ public interface VendaAPI {
     @PostMapping("/addItemVenda/{idVenda}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     void addItemVenda (@Valid @RequestBody ItemVendaRequets itemVendaRequets, @PathVariable UUID idVenda);
+
+    @DeleteMapping("/removeItemVenda/{idVenda}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    void removeItemVenda (@Valid @RequestBody RemoveItemRequets removeItemRequets, @PathVariable UUID idVenda);
 
 }

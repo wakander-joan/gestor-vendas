@@ -51,4 +51,8 @@ public class Produto {
         this.estoque = estoque - numeroReduçãoDeEstoque;
         return estoque;
     }
+
+    public void alteraEstoqueAdd(@Min(value = 1, message = "A quantidade deve ser no mínimo 1") Integer quantidadeRemovida) {
+        this.estoque = estoque + quantidadeRemovida;
+    }
 }

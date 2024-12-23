@@ -10,6 +10,7 @@ import com.empresa.gestor_vendas.venda.application.repository.VendaRepository;
 import com.empresa.gestor_vendas.venda.domain.ItemVenda;
 import com.empresa.gestor_vendas.venda.domain.StatusVenda;
 import com.empresa.gestor_vendas.venda.domain.Venda;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -69,7 +70,7 @@ public class VendaApplicationService implements VendaService {
         List<ItemVenda> lista = new ArrayList<>();
 
         verificaDuplicidadeItem(venda.getIdVenda(), itemVendaRequets.getIdProduto());
-        ItemVenda item = ItemVenda.cria(itemVendaRequets,produto, venda);
+        ItemVenda item = ItemVenda.cria(itemVendaRequets, produto, venda);
         lista.add(item);
         verificaEstoqueItens(lista);
         BigDecimal totalComprasAposFechamento = verificaComprasAposFechamento(cliente);
@@ -80,9 +81,41 @@ public class VendaApplicationService implements VendaService {
         log.info("[finish] VendaApplicationService - addItemVenda");
     }
 
+    @Override
+    public void removeItemVenda(RemoveItemRequets removeItemRequets, UUID idVenda) {
+        log.info("[start] VendaApplicationService - removeItemVenda");
+        Venda venda = vendaRepository.buscaVenda(idVenda);
+        verificaVendaAberta(venda);
+        ItemVenda item = verificaItemNaVenda(venda, removeItemRequets.getIdProduto());
+        verificaQuantidades(removeItemRequets.getQuantidadeRemovida(), item.getQuantidade());
+        Produto produto = produtoRepository.buscaProduto(item.getIdProduto());
+        venda.removeItem(item);
+        venda.atualizaTotalSubtraindo(produto.getPreco(),removeItemRequets.getQuantidadeRemovida());
+        vendaRepository.salva(venda);
+        produto.alteraEstoqueAdd(removeItemRequets.getQuantidadeRemovida());
+        produtoRepository.salvaProduto(produto);
+        log.info("[finish] VendaApplicationService - removeItemVenda");
+    }
+
+    //< - Verificações - >
+
+    private void verificaQuantidades(Integer quantidadeRemovida, int quantidade) {
+        if (quantidadeRemovida > quantidade) {
+            throw APIException.build(HttpStatus.BAD_REQUEST, "Quantidade para remoção maior que a disponível na venda!");
+        }
+    }
+
+    private ItemVenda verificaItemNaVenda(Venda venda, Integer idProduto) {
+        return venda.getItens().stream()
+                .filter(item -> item.getIdProduto().equals(idProduto))
+                .findFirst()
+                .orElseThrow(() -> APIException.build(HttpStatus.NOT_FOUND, "Item não encontrado na venda!"));
+
+    }
+
     private void verificaVendaAberta(Venda venda) {
-        if(venda.getStatusVenda().equals(StatusVenda.FECHADA)){
-            throw APIException.build(HttpStatus.NOT_FOUND,"Venda fechada!.");
+        if (venda.getStatusVenda().equals(StatusVenda.FECHADA)) {
+            throw APIException.build(HttpStatus.NOT_FOUND, "Venda fechada!.");
         }
     }
 
@@ -93,20 +126,18 @@ public class VendaApplicationService implements VendaService {
 
         BigDecimal totalFinal = totalComprasAposFechamento.add(totalItensVenda).add(precoProduto);
         if (totalFinal.compareTo(limiteCompra) > 0) {
-            throw APIException.build(HttpStatus.NOT_FOUND,"A adição dos itens excede o limite de compra do cliente.");
+            throw APIException.build(HttpStatus.NOT_FOUND, "A adição dos itens excede o limite de compra do cliente.");
         } else {
             log.info("A adição dos itens está dentro do limite de compra do cliente.");
         }
     }
-    //< - Verificações - >
-
 
     private void verificaDuplicidadeItem(UUID idVenda, Integer idProduto) {
         log.info("[start] VendaApplicationService - verificaDuplicidadeItem");
         List<ItemVenda> itens = vendaRepository.buscaItensVenda(idVenda);
-        boolean ProdutoIgual  = itens.stream()
+        boolean ProdutoIgual = itens.stream()
                 .anyMatch(item -> item.getIdProduto().equals(idProduto));
-        if (ProdutoIgual ) {
+        if (ProdutoIgual) {
             throw APIException.build(HttpStatus.NOT_FOUND, "O produto já está incluído nesta venda!");
         } else {
             log.info("Duplicidade do Produto verificada!");
