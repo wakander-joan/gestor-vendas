@@ -1,5 +1,6 @@
 package com.empresa.gestor_vendas.venda.application.api;
 
+import com.empresa.gestor_vendas.venda.application.api.dto.ItemVendaRequets;
 import com.empresa.gestor_vendas.venda.application.api.dto.VendaRequest;
 import com.empresa.gestor_vendas.venda.application.api.dto.VendaResponse;
 import com.empresa.gestor_vendas.venda.application.service.VendaService;
@@ -28,5 +29,12 @@ public class VendaController implements VendaAPI {
         log.info("[start] VendaController - fechaVenda");
         vendaService.fechaVenda(idVenda);
         log.info("[finish] VendaController - fechaVenda");
+    }
+
+    @Override
+    public void addItemVenda(ItemVendaRequets itemVendaRequets, UUID idVenda) {
+        log.info("[start] VendaController - addItemVenda");
+        vendaService.addItemVenda(itemVendaRequets, idVenda);
+        log.info("[finish] VendaController - addItemVenda");
     }
 }

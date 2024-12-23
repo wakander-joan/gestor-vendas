@@ -5,10 +5,7 @@ import com.empresa.gestor_vendas.cliente.domain.Cliente;
 import com.empresa.gestor_vendas.handler.APIException;
 import com.empresa.gestor_vendas.produto.application.repository.ProdutoRepository;
 import com.empresa.gestor_vendas.produto.domain.Produto;
-import com.empresa.gestor_vendas.venda.application.api.dto.EstoqueItemResponse;
-import com.empresa.gestor_vendas.venda.application.api.dto.VendaRequest;
-import com.empresa.gestor_vendas.venda.application.api.dto.VendaResponse;
-import com.empresa.gestor_vendas.venda.application.api.dto.VerificaLimiteResponse;
+import com.empresa.gestor_vendas.venda.application.api.dto.*;
 import com.empresa.gestor_vendas.venda.application.repository.VendaRepository;
 import com.empresa.gestor_vendas.venda.domain.ItemVenda;
 import com.empresa.gestor_vendas.venda.domain.StatusVenda;
@@ -46,7 +43,7 @@ public class VendaApplicationService implements VendaService {
         trataLimiteResponse(limiteResponse);
         BigDecimal totalCompra = calculaTotalCompra(vendaRequest.getItens(), produtoRepository);
         Venda vendaCriada = criaVenda(vendaRequest, totalCompra);
-        verificaEstoqueItens(vendaRequest);
+        verificaEstoqueItens(vendaRequest.getItens());
         vendaRepository.salva(vendaCriada);
         log.info("[finish] VendaApplicationService - abreVenda");
         return new VendaResponse(vendaCriada);
@@ -61,7 +58,61 @@ public class VendaApplicationService implements VendaService {
         log.info("[finish] VendaApplicationService - fechaVenda");
     }
 
+    @Override
+    public void addItemVenda(ItemVendaRequets itemVendaRequets, UUID idVenda) {
+        log.info("[start] VendaApplicationService - addItemVenda");
+        Venda venda = vendaRepository.buscaVenda(idVenda);
+        verificaVendaAberta(venda);
+        Produto produto = produtoRepository.buscaProduto(itemVendaRequets.getIdProduto());
+        List<ItemVenda> itensDaVenda = vendaRepository.buscaItensVenda(venda.getIdVenda());
+        Cliente cliente = clienteRepository.buscaCliente(venda.getIdCliente());
+        List<ItemVenda> lista = new ArrayList<>();
+
+        verificaDuplicidadeItem(venda.getIdVenda(), itemVendaRequets.getIdProduto());
+        ItemVenda item = ItemVenda.cria(itemVendaRequets,produto, venda);
+        lista.add(item);
+        verificaEstoqueItens(lista);
+        BigDecimal totalComprasAposFechamento = verificaComprasAposFechamento(cliente);
+        verificaLimiteAdd(totalComprasAposFechamento, itensDaVenda, cliente.getLimiteCompra(), produto.getPreco());
+        venda.addItemVenda(item);
+        venda.atualizaTotal(produto.getPreco());
+        vendaRepository.salva(venda);
+        log.info("[finish] VendaApplicationService - addItemVenda");
+    }
+
+    private void verificaVendaAberta(Venda venda) {
+        if(venda.getStatusVenda().equals(StatusVenda.FECHADA)){
+            throw APIException.build(HttpStatus.NOT_FOUND,"Venda fechada!.");
+        }
+    }
+
+    private void verificaLimiteAdd(BigDecimal totalComprasAposFechamento, List<ItemVenda> itensDaVenda, @NotNull BigDecimal limiteCompra, BigDecimal precoProduto) {
+        BigDecimal totalItensVenda = itensDaVenda.stream()
+                .map(item -> produtoRepository.buscaProduto(item.getIdProduto()).getPreco().multiply(BigDecimal.valueOf(item.getQuantidade())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalFinal = totalComprasAposFechamento.add(totalItensVenda).add(precoProduto);
+        if (totalFinal.compareTo(limiteCompra) > 0) {
+            throw APIException.build(HttpStatus.NOT_FOUND,"A adição dos itens excede o limite de compra do cliente.");
+        } else {
+            log.info("A adição dos itens está dentro do limite de compra do cliente.");
+        }
+    }
     //< - Verificações - >
+
+
+    private void verificaDuplicidadeItem(UUID idVenda, Integer idProduto) {
+        log.info("[start] VendaApplicationService - verificaDuplicidadeItem");
+        List<ItemVenda> itens = vendaRepository.buscaItensVenda(idVenda);
+        boolean ProdutoIgual  = itens.stream()
+                .anyMatch(item -> item.getIdProduto().equals(idProduto));
+        if (ProdutoIgual ) {
+            throw APIException.build(HttpStatus.NOT_FOUND, "O produto já está incluído nesta venda!");
+        } else {
+            log.info("Duplicidade do Produto verificada!");
+        }
+        log.info("[finish] VendaApplicationService - verificaDuplicidadeItem");
+    }
 
     private void verificaVendasAbertas(@NotNull UUID idCliente) {
         List<Venda> vendas = vendaRepository.buscaVendasCliente(idCliente);
@@ -72,7 +123,6 @@ public class VendaApplicationService implements VendaService {
         } else {
             log.info("O cliente não possui nenhuma  venda em aberto.");
         }
-
     }
 
     private void trataLimiteResponse(VerificaLimiteResponse limiteResponse) {
@@ -83,17 +133,17 @@ public class VendaApplicationService implements VendaService {
         log.info("[finish] VendaApplicationService - trataLimiteResponse");
     }
 
-    public void verificaEstoqueItens(VendaRequest vendaRequest) {
+    public void verificaEstoqueItens(List<ItemVenda> itens) {
         log.info("[start] VendaApplicationService - verificaEstoqueItens");
 
-        boolean quantidadeInvalidaItem = vendaRequest.getItens().stream()
+        boolean quantidadeInvalidaItem = itens.stream()
                 .anyMatch(item -> item.getQuantidade() <= 0);
         if (quantidadeInvalidaItem) {
             throw APIException.build(HttpStatus.BAD_REQUEST, "Todos os itens devem ter uma quantidade mínima de 1.");
         }
 
         List<EstoqueItemResponse> itensResposta = new ArrayList<>();
-        vendaRequest.getItens().forEach(itemVendaRequest -> {
+        itens.forEach(itemVendaRequest -> {
             Produto produtoEstoque = produtoRepository.buscaProduto(itemVendaRequest.getIdProduto());
             boolean temEstoqueSuficiente = produtoEstoque.getEstoque() >= itemVendaRequest.getQuantidade();
             if (temEstoqueSuficiente) {
@@ -181,7 +231,7 @@ public class VendaApplicationService implements VendaService {
                     (diaAbertura.getMonthValue() > hoje.getMonthValue() && diaAbertura.getYear() >= hoje.getYear()))
                     && venda.getStatusVenda() == StatusVenda.FECHADA) {
                 totalCompras = totalCompras.add(venda.getValorTotal());
-                log.info("Venda realizada após o fechamento e com status FECHADA: " + venda);
+                log.info("Venda realizada após o fechamento e com status FECHADA: ");
             }
         }
         log.info("[finish] VendaApplicationService - verificaComprasAposFechamento");
@@ -189,6 +239,7 @@ public class VendaApplicationService implements VendaService {
     }
 
     public BigDecimal calculaTotalCompra(List<ItemVenda> itensVenda, ProdutoRepository produtoRepository) {
+
         return itensVenda.stream()
                 .map(item -> produtoRepository.buscaProduto(item.getIdProduto()).getPreco().multiply(BigDecimal.valueOf(item.getQuantidade())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);

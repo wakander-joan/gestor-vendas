@@ -1,5 +1,8 @@
 package com.empresa.gestor_vendas.venda.domain;
 
+import com.empresa.gestor_vendas.produto.domain.Produto;
+import com.empresa.gestor_vendas.venda.application.api.dto.ItemVendaRequets;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -27,6 +30,14 @@ public class ItemVenda {
     private int quantidade;
     @ManyToOne
     @JoinColumn(name = "id_venda", nullable = false)
-    @JsonIgnore
+    @JsonBackReference
     private Venda venda;
+
+    public static ItemVenda cria(ItemVendaRequets itemVendaRequets, Produto produto, Venda venda) {
+        ItemVenda item = new ItemVenda();
+        item.setIdProduto(produto.getIdProduto());
+        item.setQuantidade(itemVendaRequets.getQuantidade());
+        item.setVenda(venda);
+        return item;
+    }
 }

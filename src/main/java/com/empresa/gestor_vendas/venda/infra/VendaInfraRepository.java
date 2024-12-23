@@ -2,6 +2,7 @@ package com.empresa.gestor_vendas.venda.infra;
 
 import com.empresa.gestor_vendas.handler.APIException;
 import com.empresa.gestor_vendas.venda.application.repository.VendaRepository;
+import com.empresa.gestor_vendas.venda.domain.ItemVenda;
 import com.empresa.gestor_vendas.venda.domain.Venda;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -39,5 +40,13 @@ public class VendaInfraRepository implements VendaRepository {
                 .orElseThrow(() -> APIException.build(HttpStatus.NOT_FOUND, "Venda não encontrada!"));
         log.info("[finish] VendaInfraRepository - buscaVenda");
         return venda;
+    }
+
+    @Override
+    public List<ItemVenda> buscaItensVenda(UUID idVenda) {
+        log.info("[start] VendaInfraRepository - buscaItensVenda");
+        List<ItemVenda> itens = vendaSpringDataJPARepository.findByIdVenda(idVenda);
+        log.info("[finish] VendaInfraRepository - buscaItensVenda");
+        return itens;
     }
 }

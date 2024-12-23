@@ -1,6 +1,7 @@
 package com.empresa.gestor_vendas.venda.application.api;
 
-import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoEditaRequest;
+import com.empresa.gestor_vendas.venda.application.api.dto.AddItemVendaRequest;
+import com.empresa.gestor_vendas.venda.application.api.dto.ItemVendaRequets;
 import com.empresa.gestor_vendas.venda.application.api.dto.VendaRequest;
 import com.empresa.gestor_vendas.venda.application.api.dto.VendaResponse;
 import jakarta.validation.Valid;
@@ -20,5 +21,9 @@ public interface VendaAPI {
     @PatchMapping("/fechaVenda/{idVenda}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     void fechaVenda( @PathVariable UUID idVenda);
+
+    @PostMapping("/addItemVenda/{idVenda}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    void addItemVenda (@Valid @RequestBody ItemVendaRequets itemVendaRequets, @PathVariable UUID idVenda);
 
 }

@@ -1,7 +1,9 @@
 package com.empresa.gestor_vendas.venda.domain;
 
 import com.empresa.gestor_vendas.venda.application.api.dto.VendaRequest;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -27,7 +29,8 @@ public class Venda {
     private LocalDateTime diaAbertura;
     private UUID idCliente;
     private StatusVenda statusVenda;
-    @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<ItemVenda> itens;
 
     public static Venda criaVenda (VendaRequest vendaRequest, BigDecimal totalCompra){
@@ -56,5 +59,13 @@ public class Venda {
 
     public void fecha() {
         this.statusVenda = StatusVenda.FECHADA;
+    }
+
+    public void addItemVenda(ItemVenda item) {
+        itens.add(item);
+    }
+
+    public void atualizaTotal(@NotNull BigDecimal preco) {
+        this.valorTotal = valorTotal.add(preco);
     }
 }
