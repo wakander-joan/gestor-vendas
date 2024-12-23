@@ -15,4 +15,5 @@ public interface VendaRepository {
     Venda buscaVenda(UUID idVenda);
     List<ItemVenda> buscaItensVenda(UUID idVenda);
     List<Venda> filtraVendas(UUID idCliente, Integer idProduto, LocalDate inicio, LocalDate fim);
+    void deletaVenda(UUID idVenda);
 }

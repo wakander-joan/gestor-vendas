@@ -141,8 +141,27 @@ public class VendaApplicationService implements VendaService {
         return response;
     }
 
+    @Override
+    public void deletaVenda(UUID idVenda) {
+        log.info("[start] VendaApplicationService - deletaVenda");
+        Venda venda = vendaRepository.buscaVenda(idVenda);
+        if(venda.getStatusVenda().equals(StatusVenda.ABERTA)) {
+            devolveEstoqueItensDeletados(venda.getItens());
+        }
+        vendaRepository.deletaVenda(idVenda);
+        log.info("[finish] VendaApplicationService - deletaVenda");
+    }
 
     //< - Verificações - >
+
+    private void devolveEstoqueItensDeletados(List<ItemVenda> itens) {
+        itens.forEach(item -> {
+            Produto produto = produtoRepository.buscaProduto(item.getIdProduto());
+            produto.alteraEstoqueAdd(item.getQuantidade());
+            produtoRepository.salvaProduto(produto);
+        });
+    }
+
 
     private void verificaQuantidades(Integer quantidadeRemovida, int quantidade) {
         if (quantidadeRemovida > quantidade) {

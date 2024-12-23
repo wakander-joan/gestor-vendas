@@ -63,4 +63,11 @@ public class VendaController implements VendaAPI {
         log.info("[finish] VendaController - filtraVendas");
         return vendasFiltradas;
     }
+
+    @Override
+    public void deletaVenda(UUID idVenda) {
+        log.info("[start] VendaController - deletaVenda");
+        vendaService.deletaVenda(idVenda);
+        log.info("[finish] VendaController - deletaVenda");
+    }
 }

@@ -43,4 +43,8 @@ public interface VendaAPI {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fim
     );
 
+    @DeleteMapping("/deletaVenda/{idVenda}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    void deletaVenda (@PathVariable UUID idVenda);
+
 }

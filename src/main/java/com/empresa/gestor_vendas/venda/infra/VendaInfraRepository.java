@@ -60,4 +60,11 @@ public class VendaInfraRepository implements VendaRepository {
         log.info("[finish] VendaInfraRepository - filtraVendas");
         return vendas;
     }
+
+    @Override
+    public void deletaVenda(UUID idVenda) {
+        log.info("[start] VendaInfraRepository - deletaVenda");
+        vendaSpringDataJPARepository.deleteById(idVenda);
+        log.info("[finish] VendaInfraRepository - deletaVenda");
+    }
 }
