@@ -45,4 +45,12 @@ public class VendaController implements VendaAPI {
         vendaService.removeItemVenda(removeItemRequets, idVenda);
         log.info("[finish] VendaController - removeItemVenda");
     }
+
+    @Override
+    public VendaDetalhadaResponse buscaVenda(UUID idVenda) {
+        log.info("[start] VendaController - buscaVenda");
+        VendaDetalhadaResponse venda = vendaService.buscaVenda(idVenda);
+        log.info("[finish] VendaController - buscaVenda");
+        return venda;
+    }
 }

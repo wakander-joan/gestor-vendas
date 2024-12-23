@@ -27,4 +27,8 @@ public interface VendaAPI {
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     void removeItemVenda (@Valid @RequestBody RemoveItemRequets removeItemRequets, @PathVariable UUID idVenda);
 
+    @GetMapping("/buscaVenda/{idVenda}")
+    @ResponseStatus(code = HttpStatus.OK)
+    VendaDetalhadaResponse buscaVenda (@PathVariable UUID idVenda);
+
 }

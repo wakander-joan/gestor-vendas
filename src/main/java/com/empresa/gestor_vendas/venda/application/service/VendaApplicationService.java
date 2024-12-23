@@ -5,12 +5,12 @@ import com.empresa.gestor_vendas.cliente.domain.Cliente;
 import com.empresa.gestor_vendas.handler.APIException;
 import com.empresa.gestor_vendas.produto.application.repository.ProdutoRepository;
 import com.empresa.gestor_vendas.produto.domain.Produto;
+import com.empresa.gestor_vendas.venda.application.api.VendaDetalhadaResponse;
 import com.empresa.gestor_vendas.venda.application.api.dto.*;
 import com.empresa.gestor_vendas.venda.application.repository.VendaRepository;
 import com.empresa.gestor_vendas.venda.domain.ItemVenda;
 import com.empresa.gestor_vendas.venda.domain.StatusVenda;
 import com.empresa.gestor_vendas.venda.domain.Venda;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -23,6 +23,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.empresa.gestor_vendas.venda.domain.Venda.criaVenda;
 
@@ -90,11 +91,31 @@ public class VendaApplicationService implements VendaService {
         verificaQuantidades(removeItemRequets.getQuantidadeRemovida(), item.getQuantidade());
         Produto produto = produtoRepository.buscaProduto(item.getIdProduto());
         venda.removeItem(item);
-        venda.atualizaTotalSubtraindo(produto.getPreco(),removeItemRequets.getQuantidadeRemovida());
+        venda.atualizaTotalSubtraindo(produto.getPreco(), removeItemRequets.getQuantidadeRemovida());
         vendaRepository.salva(venda);
         produto.alteraEstoqueAdd(removeItemRequets.getQuantidadeRemovida());
         produtoRepository.salvaProduto(produto);
         log.info("[finish] VendaApplicationService - removeItemVenda");
+    }
+
+    @Override
+    public VendaDetalhadaResponse buscaVenda(UUID idVenda) {
+        log.info("[start] VendaApplicationService - buscaVenda");
+        Venda venda = vendaRepository.buscaVenda(idVenda);
+        List<ItemVendaDetalhadoResponse> itensDetalhados = venda.getItens().stream()
+                .map(itemVenda -> {
+                    Produto produto = produtoRepository.buscaProduto(itemVenda.getIdProduto());
+                    return new ItemVendaDetalhadoResponse(
+                            produto.getIdProduto(),
+                            produto.getDescricao(),
+                            produto.getPreco(),
+                            itemVenda.getQuantidade()
+                    );
+                })
+                .collect(Collectors.toList());
+        VendaDetalhadaResponse response = new VendaDetalhadaResponse(venda, itensDetalhados);
+        log.info("[finish] VendaApplicationService - buscaVenda");
+        return response;
     }
 
     //< - Verificações - >
