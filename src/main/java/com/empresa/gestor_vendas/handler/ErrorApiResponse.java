@@ -1,7 +1,6 @@
 package com.empresa.gestor_vendas.handler;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

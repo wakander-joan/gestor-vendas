@@ -46,4 +46,9 @@ public class Produto {
             this.estoque = produtoEditaRequest.getEstoque();
         }
     }
+
+    public int alteraEstoque(int numeroReduçãoDeEstoque) {
+        this.estoque = estoque - numeroReduçãoDeEstoque;
+        return estoque;
+    }
 }

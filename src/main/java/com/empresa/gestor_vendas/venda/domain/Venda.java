@@ -8,8 +8,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Getter
+@Setter
 @ToString
 @Entity
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -23,15 +25,33 @@ public class Venda {
     private BigDecimal valorTotal;
     @Column( updatable = false, nullable = false)
     private LocalDateTime diaAbertura;
-    private LocalDateTime diaVenda;
     private UUID idCliente;
     private StatusVenda statusVenda;
     @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemVenda> itens;
 
-    public Venda(VendaRequest vendaRequest) {
-        this.diaAbertura = LocalDateTime.now();
-        this.idCliente = vendaRequest.getIdCliente();
-        this.statusVenda = StatusVenda.ABERTA;
+    public static Venda criaVenda (VendaRequest vendaRequest, BigDecimal totalCompra){
+        Venda venda = new Venda();
+        venda.setIdCliente(UUID.fromString(String.valueOf(vendaRequest.getIdCliente())));
+        venda.setDiaAbertura(LocalDateTime.now());
+        venda.setValorTotal(totalCompra);
+        venda.setStatusVenda(StatusVenda.ABERTA);
+        return venda.adicionaItenIniciais(venda, vendaRequest);
     }
+
+    private Venda adicionaItenIniciais(Venda venda, VendaRequest vendaRequest) {
+        List<ItemVenda> itens = vendaRequest.getItens().stream()
+                .map(itemDoCarrinhoRequest -> {
+                    ItemVenda item = new ItemVenda();
+                    item.setQuantidade(itemDoCarrinhoRequest.getQuantidade());
+                    item.setIdProduto(itemDoCarrinhoRequest.getIdProduto());
+                    item.setVenda(venda);
+                    return item;
+                })
+                .collect(Collectors.toList());
+
+        venda.setItens(itens);
+        return venda;
+    }
+
 }

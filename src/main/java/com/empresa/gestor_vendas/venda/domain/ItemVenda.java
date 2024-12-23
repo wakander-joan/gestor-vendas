@@ -2,6 +2,7 @@ package com.empresa.gestor_vendas.venda.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 
 import java.util.UUID;
@@ -19,8 +20,9 @@ public class ItemVenda {
     @Column(columnDefinition = "uuid", updatable = false, unique = true, nullable = false)
     private UUID idItemVenda;
 
-    @Column(columnDefinition = "UUID", nullable = false)
-    private UUID idProduto;
+    @Column(columnDefinition = "INTEGER", nullable = false)
+    private Integer idProduto;
+    @Min(value = 1, message = "A quantidade deve ser no mínimo 1")
     @Column(nullable = false)
     private int quantidade;
     @ManyToOne
