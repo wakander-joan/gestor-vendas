@@ -6,6 +6,8 @@ import com.empresa.gestor_vendas.venda.application.api.dto.RemoveItemRequets;
 import com.empresa.gestor_vendas.venda.application.api.dto.VendaRequest;
 import com.empresa.gestor_vendas.venda.application.api.dto.VendaResponse;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 public interface VendaService {
@@ -14,4 +16,5 @@ public interface VendaService {
     void addItemVenda(ItemVendaRequets itemVendaRequets, UUID idVenda);
     void removeItemVenda(RemoveItemRequets removeItemRequets, UUID idVenda);
     VendaDetalhadaResponse buscaVenda(UUID idVenda);
+    List<VendaDetalhadaResponse> filtraVendas(UUID idCliente, Integer idProduto, LocalDate inicio, LocalDate fim);
 }

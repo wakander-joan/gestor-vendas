@@ -118,6 +118,30 @@ public class VendaApplicationService implements VendaService {
         return response;
     }
 
+    @Override
+    public List<VendaDetalhadaResponse> filtraVendas(UUID idCliente, Integer idProduto, LocalDate inicio, LocalDate fim) {
+        log.info("[start] VendaApplicationService - filtraVendas");
+        List<Venda> vendas = vendaRepository.filtraVendas(idCliente, idProduto, inicio, fim);
+
+        List<VendaDetalhadaResponse> response = vendas.stream().map(venda -> {
+            List<ItemVendaDetalhadoResponse> itensDetalhados = venda.getItens().stream()
+                    .map(itemVenda -> {
+                        Produto produto = produtoRepository.buscaProduto(itemVenda.getIdProduto());
+                        return new ItemVendaDetalhadoResponse(
+                                produto.getIdProduto(),
+                                produto.getDescricao(),
+                                produto.getPreco(),
+                                itemVenda.getQuantidade()
+                        );
+                    }).collect(Collectors.toList());
+            return new VendaDetalhadaResponse(venda, itensDetalhados);
+        }).collect(Collectors.toList());
+
+        log.info("[finish] VendaApplicationService - filtraVendas");
+        return response;
+    }
+
+
     //< - Verificações - >
 
     private void verificaQuantidades(Integer quantidadeRemovida, int quantidade) {

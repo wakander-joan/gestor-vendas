@@ -2,9 +2,12 @@ package com.empresa.gestor_vendas.venda.application.api;
 
 import com.empresa.gestor_vendas.venda.application.api.dto.*;
 import jakarta.validation.Valid;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -30,5 +33,14 @@ public interface VendaAPI {
     @GetMapping("/buscaVenda/{idVenda}")
     @ResponseStatus(code = HttpStatus.OK)
     VendaDetalhadaResponse buscaVenda (@PathVariable UUID idVenda);
+
+    @GetMapping("/filtro")
+    @ResponseStatus(code = HttpStatus.OK)
+    List<VendaDetalhadaResponse> filtraVendas(
+            @RequestParam(required = false) UUID idCliente,
+            @RequestParam(required = false) Integer idProduto,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inicio,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fim
+    );
 
 }

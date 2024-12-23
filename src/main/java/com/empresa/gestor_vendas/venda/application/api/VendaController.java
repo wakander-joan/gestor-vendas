@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -52,5 +54,13 @@ public class VendaController implements VendaAPI {
         VendaDetalhadaResponse venda = vendaService.buscaVenda(idVenda);
         log.info("[finish] VendaController - buscaVenda");
         return venda;
+    }
+
+    @Override
+    public List<VendaDetalhadaResponse> filtraVendas(UUID idCliente, Integer idProduto, LocalDate inicio, LocalDate fim) {
+        log.info("[start] VendaController - filtraVendas");
+        List<VendaDetalhadaResponse> vendasFiltradas = vendaService.filtraVendas(idCliente, idProduto, inicio, fim);
+        log.info("[finish] VendaController - filtraVendas");
+        return vendasFiltradas;
     }
 }

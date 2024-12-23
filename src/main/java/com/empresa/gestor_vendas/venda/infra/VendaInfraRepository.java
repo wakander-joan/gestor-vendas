@@ -4,11 +4,14 @@ import com.empresa.gestor_vendas.handler.APIException;
 import com.empresa.gestor_vendas.venda.application.repository.VendaRepository;
 import com.empresa.gestor_vendas.venda.domain.ItemVenda;
 import com.empresa.gestor_vendas.venda.domain.Venda;
+import com.empresa.gestor_vendas.venda.specification.VendaSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -48,5 +51,13 @@ public class VendaInfraRepository implements VendaRepository {
         List<ItemVenda> itens = vendaSpringDataJPARepository.findByIdVenda(idVenda);
         log.info("[finish] VendaInfraRepository - buscaItensVenda");
         return itens;
+    }
+
+    public List<Venda> filtraVendas(UUID idCliente, Integer idProduto, LocalDate inicio, LocalDate fim) {
+        log.info("[start] VendaInfraRepository - filtraVendas");
+        Specification<Venda> spec = VendaSpecification.filtraVendas(idCliente, idProduto, inicio, fim);
+        List<Venda> vendas = vendaSpringDataJPARepository.findAll(spec);
+        log.info("[finish] VendaInfraRepository - filtraVendas");
+        return vendas;
     }
 }
