@@ -98,5 +98,25 @@ class ProdutoApplicationServiceTest {
         verify(produtoRepository).buscaTodosProduto();
     }
 
+    @Test
+    void deveDeletarProdutoComSucesso() {
+        // Dado que
+        Produto produto = Produto.builder()
+                .idProduto(1)
+                .descricao("Produto A")
+                .preco(new BigDecimal("10.00"))
+                .estoque(5)
+                .build();
+
+        when(produtoRepository.buscaProduto(1)).thenReturn(produto);
+
+        // Faça
+        produtoApplicationService.deletaProduto(1);
+
+        // Verifica
+        verify(produtoRepository).buscaProduto(1);
+        verify(produtoRepository).deletaProduto(1);
+    }
+
 }
 
