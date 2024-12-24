@@ -1,9 +1,6 @@
 package com.empresa.gestor_vendas.produto.application.service;
 
-import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoDetalhadoResponse;
-import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoListResponse;
-import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoRequest;
-import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoResponse;
+import com.empresa.gestor_vendas.produto.application.api.dto.*;
 import com.empresa.gestor_vendas.produto.application.repository.ProdutoRepository;
 import com.empresa.gestor_vendas.produto.domain.Produto;
 import org.junit.jupiter.api.Test;
@@ -116,6 +113,34 @@ class ProdutoApplicationServiceTest {
         // Verifica
         verify(produtoRepository).buscaProduto(1);
         verify(produtoRepository).deletaProduto(1);
+    }
+
+    @Test
+    void deveEditarProdutoComSucesso() {
+        // Dado que
+        Produto produto = Produto.builder()
+                .idProduto(1)
+                .descricao("Produto A")
+                .preco(new BigDecimal("10.00"))
+                .estoque(5)
+                .build();
+        ProdutoEditaRequest produtoEditaRequest = new ProdutoEditaRequest();
+        produtoEditaRequest.setDescricao("Produto B");
+        produtoEditaRequest.setPreco(new BigDecimal("15.00"));
+        produtoEditaRequest.setEstoque(10);
+
+        when(produtoRepository.buscaProduto(1)).thenReturn(produto);
+        when(produtoRepository.salvaProduto(produto)).thenReturn(produto);
+
+        // Faça
+        produtoApplicationService.editaProduto(produtoEditaRequest, 1);
+
+        // Verifica
+        verify(produtoRepository).buscaProduto(1);
+        verify(produtoRepository).salvaProduto(produto);
+        assertEquals("Produto B", produto.getDescricao());
+        assertEquals(new BigDecimal("15.00"), produto.getPreco());
+        assertEquals(10, produto.getEstoque());
     }
 
 }
