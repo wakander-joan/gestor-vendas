@@ -11,11 +11,12 @@ import lombok.*;
 import java.math.BigDecimal;
 
 @Getter
+@Setter
 @ToString
 @Entity
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-@Builder(access = AccessLevel.PACKAGE)
-@AllArgsConstructor(access = AccessLevel.PACKAGE)
+@Builder(access = AccessLevel.PUBLIC)
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
 public class Produto {
 
     @Id
