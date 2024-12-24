@@ -1,6 +1,7 @@
 package com.empresa.gestor_vendas.produto.application.service;
 
 import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoDetalhadoResponse;
+import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoListResponse;
 import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoRequest;
 import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoResponse;
 import com.empresa.gestor_vendas.produto.application.repository.ProdutoRepository;
@@ -12,9 +13,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -72,6 +74,28 @@ class ProdutoApplicationServiceTest {
         assertEquals(1, produtoDetalhadoResponse.getIdProduto());
         assertEquals("Produto A", produtoDetalhadoResponse.getDescricao());
         verify(produtoRepository).buscaProduto(1);
+    }
+
+    @Test
+    void deveBuscarTodosProdutosComSucesso() {
+        // Dado que
+        Produto produto = Produto.builder()
+                .idProduto(1)
+                .descricao("Produto A")
+                .preco(new BigDecimal("10.00"))
+                .estoque(5)
+                .build();
+
+        when(produtoRepository.buscaTodosProduto()).thenReturn(Collections.singletonList(produto));
+
+        // Faça
+        List<ProdutoListResponse> produtoListResponses = produtoApplicationService.buscaTodosProduto();
+
+        // Verifica
+        assertNotNull(produtoListResponses);
+        assertFalse(produtoListResponses.isEmpty());
+        assertEquals(1, produtoListResponses.size());
+        verify(produtoRepository).buscaTodosProduto();
     }
 
 }
