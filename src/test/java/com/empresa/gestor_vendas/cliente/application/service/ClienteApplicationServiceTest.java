@@ -43,4 +43,23 @@ class ClienteApplicationServiceTest {
         verify(clienteRepository, times(1)).salvaCliente(any(Cliente.class));
     }
 
+    @Test
+    void verificaRetornoClienteDetalhadoComSucesso() {
+        // Arrange
+        UUID idCliente = UUID.randomUUID();
+        Cliente clienteMock = new Cliente(idCliente, "João", "joao@gmail.com", new BigDecimal("1000.00"), 10);
+        when(clienteRepository.buscaCliente(idCliente)).thenReturn(clienteMock);
+
+        // Act
+        ClienteDetalhadoResponse response = clienteApplicationService.buscaCliente(idCliente);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals("João", response.getNome());
+        assertEquals("joao@gmail.com", response.getEmail());
+        assertEquals(new BigDecimal("1000.00"), response.getLimiteCompra());
+        assertEquals(10, response.getDiaFechamento());
+        verify(clienteRepository, times(1)).buscaCliente(idCliente);
+    }
+
 }
