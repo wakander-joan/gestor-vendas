@@ -94,4 +94,25 @@ class ClienteApplicationServiceTest {
         verify(clienteRepository, times(1)).deletaCliente(idCliente);
     }
 
+    @Test
+    void editaCliente_deveEditarComSucesso() {
+        // Dado que
+        UUID idCliente = UUID.randomUUID();
+        Cliente clienteMock = new Cliente(idCliente, "João", "joao@gmail.com", new BigDecimal("1000.00"), 10);
+        ClienteEditaRequest editaRequest = new ClienteEditaRequest("João Editado", "joaoeditado@gmail.com", new BigDecimal("2000.00"), 15);
+
+        when(clienteRepository.buscaCliente(idCliente)).thenReturn(clienteMock);
+        when(clienteRepository.salvaCliente(clienteMock)).thenReturn(clienteMock);
+
+        // Faça
+        clienteApplicationService.editaCliente(editaRequest, idCliente);
+
+        // Verifique
+        assertEquals("João Editado", clienteMock.getNome());
+        assertEquals("joaoeditado@gmail.com", clienteMock.getEmail());
+        assertEquals(new BigDecimal("2000.00"), clienteMock.getLimiteCompra());
+        assertEquals(15, clienteMock.getDiaFechamento());
+        verify(clienteRepository, times(1)).salvaCliente(clienteMock);
+    }
+
 }
