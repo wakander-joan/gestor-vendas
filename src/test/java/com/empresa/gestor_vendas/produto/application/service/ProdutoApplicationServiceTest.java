@@ -1,5 +1,6 @@
 package com.empresa.gestor_vendas.produto.application.service;
 
+import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoDetalhadoResponse;
 import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoRequest;
 import com.empresa.gestor_vendas.produto.application.api.dto.ProdutoResponse;
 import com.empresa.gestor_vendas.produto.application.repository.ProdutoRepository;
@@ -49,6 +50,28 @@ class ProdutoApplicationServiceTest {
         assertNotNull(produtoResponse);
         assertEquals(1, produtoResponse.getIdProduto());
         verify(produtoRepository).salvaProduto(any(Produto.class));
+    }
+
+    @Test
+    void deveBuscarProdutoComSucesso() {
+        // Dado que
+        Produto produto = Produto.builder()
+                .idProduto(1)
+                .descricao("Produto A")
+                .preco(new BigDecimal("10.00"))
+                .estoque(5)
+                .build();
+
+        when(produtoRepository.buscaProduto(1)).thenReturn(produto);
+
+        // Faça
+        ProdutoDetalhadoResponse produtoDetalhadoResponse = produtoApplicationService.buscaProduto(1);
+
+        // Verifica
+        assertNotNull(produtoDetalhadoResponse);
+        assertEquals(1, produtoDetalhadoResponse.getIdProduto());
+        assertEquals("Produto A", produtoDetalhadoResponse.getDescricao());
+        verify(produtoRepository).buscaProduto(1);
     }
 
 }
