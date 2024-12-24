@@ -79,4 +79,19 @@ class ClienteApplicationServiceTest {
         verify(clienteRepository, times(1)).buscaTodosClientes();
     }
 
+    @Test
+    void deletaCliente_deveDeletarComSucesso() {
+        // Dado que
+        UUID idCliente = UUID.randomUUID();
+        Cliente clienteMock = new Cliente(idCliente, "João", "joao@gmail.com", new BigDecimal("1000.00"), 10);
+        when(clienteRepository.buscaCliente(idCliente)).thenReturn(clienteMock);
+        doNothing().when(clienteRepository).deletaCliente(idCliente);
+
+        // Faça
+        clienteApplicationService.deletaCliente(idCliente);
+
+        // Verifique
+        verify(clienteRepository, times(1)).deletaCliente(idCliente);
+    }
+
 }
