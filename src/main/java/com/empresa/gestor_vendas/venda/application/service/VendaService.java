@@ -18,4 +18,5 @@ public interface VendaService {
     VendaDetalhadaResponse buscaVenda(UUID idVenda);
     List<VendaDetalhadaResponse> filtraVendas(UUID idCliente, Integer idProduto, LocalDate inicio, LocalDate fim);
     void deletaVenda(UUID idVenda);
+    void alteraQuantidadeItem(ItemVendaRequets itemVendaRequets, UUID idVenda);
 }

@@ -11,6 +11,7 @@ import com.empresa.gestor_vendas.venda.application.repository.VendaRepository;
 import com.empresa.gestor_vendas.venda.domain.ItemVenda;
 import com.empresa.gestor_vendas.venda.domain.StatusVenda;
 import com.empresa.gestor_vendas.venda.domain.Venda;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -91,7 +92,9 @@ public class VendaApplicationService implements VendaService {
         verificaQuantidades(removeItemRequets.getQuantidadeRemovida(), item.getQuantidade());
         Produto produto = produtoRepository.buscaProduto(item.getIdProduto());
         venda.removeItem(item);
-        venda.atualizaTotalSubtraindo(produto.getPreco(), removeItemRequets.getQuantidadeRemovida());
+        BigDecimal preçoProduto = produto.getPreco();
+        BigDecimal precoAlterar = preçoProduto.multiply(BigDecimal.valueOf(removeItemRequets.getQuantidadeRemovida()));
+        venda.atualizaTotalSubtraindo(precoAlterar);
         vendaRepository.salva(venda);
         produto.alteraEstoqueAdd(removeItemRequets.getQuantidadeRemovida());
         produtoRepository.salvaProduto(produto);
@@ -145,14 +148,94 @@ public class VendaApplicationService implements VendaService {
     public void deletaVenda(UUID idVenda) {
         log.info("[start] VendaApplicationService - deletaVenda");
         Venda venda = vendaRepository.buscaVenda(idVenda);
-        if(venda.getStatusVenda().equals(StatusVenda.ABERTA)) {
+        if (venda.getStatusVenda().equals(StatusVenda.ABERTA)) {
             devolveEstoqueItensDeletados(venda.getItens());
         }
         vendaRepository.deletaVenda(idVenda);
         log.info("[finish] VendaApplicationService - deletaVenda");
     }
 
+    @Override
+    public void alteraQuantidadeItem(ItemVendaRequets itemVendaRequets, UUID idVenda) {
+        log.info("[start] VendaApplicationService - alteraQuantidadeItem");
+        Venda venda = vendaRepository.buscaVenda(idVenda);
+        log.info("ID do produto na requisição: {}", itemVendaRequets.getIdProduto());
+        verificaVendaAberta(venda);
+        ItemVenda item = encontraItemComMesmoProduto(itemVendaRequets.getIdProduto(), venda);
+
+        if (itemVendaRequets.getQuantidade() > item.getQuantidade()) {
+            cenarioAdicionaQuantidade(venda, itemVendaRequets.getQuantidade(), item);
+        } else if (itemVendaRequets.getQuantidade() < item.getQuantidade()) {
+            cenarioRemoveQuantidade(venda, itemVendaRequets.getQuantidade(), item);
+        } else {
+            throw APIException.build(HttpStatus.BAD_REQUEST, "A quantidade fornecida é igual à quantidade atual do item na venda. Nenhuma alteração foi realizada!");
+        }
+        log.info("[finish] VendaApplicationService - alteraQuantidadeItem");
+    }
+
+    private void cenarioRemoveQuantidade(Venda venda, @NotNull @Min(value = 1, message = "A quantidade deve ser no mínimo 1") int quantidadeRequeste, ItemVenda item) {
+        log.info("[start] VendaApplicationService - cenarioRemoveQuantidade");
+        int quantidadeAlterar = item.getQuantidade() - quantidadeRequeste;
+        Produto produto = produtoRepository.buscaProduto(item.getIdProduto());
+        produto.alteraEstoqueAdd(quantidadeAlterar);
+        produtoRepository.salvaProduto(produto);
+
+        venda.alteraQuantidadeItemVenda(item.getIdProduto(), quantidadeRequeste);
+        BigDecimal preçoProduto = produto.getPreco();
+        BigDecimal precoAlterar = preçoProduto.multiply(BigDecimal.valueOf(quantidadeAlterar));
+        venda.atualizaTotalSubtraindo(precoAlterar);
+        vendaRepository.salva(venda);
+        log.info("[finish] VendaApplicationService - cenarioRemoveQuantidade");
+    }
+
+    private void cenarioAdicionaQuantidade(Venda venda, @NotNull @Min(value = 1, message = "A quantidade deve ser no mínimo 1") int quantidadeRequeste, ItemVenda item) {
+        log.info("[start] VendaApplicationService - cenarioAdicionaQuantidade");
+        Integer quantidadeAlterar = quantidadeRequeste - item.getQuantidade();
+        verificaQuantidadeEstoque(item.getIdProduto(), quantidadeAlterar);
+        Cliente cliente = clienteRepository.buscaCliente(venda.getIdCliente());
+        BigDecimal totalComprasAposFechamento = verificaComprasAposFechamento(cliente);
+        List<ItemVenda> lista = new ArrayList<>();
+        lista.add(item);
+        VerificaLimiteResponse limiteResponse = verificaLimite(lista, cliente, produtoRepository, totalComprasAposFechamento);
+        trataLimiteResponse(limiteResponse);
+
+        venda.alteraQuantidadeItemVenda(item.getIdProduto(), quantidadeRequeste);
+        Produto produto = produtoRepository.buscaProduto(item.getIdProduto());
+        BigDecimal preçoProduto = produto.getPreco();
+        BigDecimal precoAlterar = preçoProduto.multiply(BigDecimal.valueOf(quantidadeAlterar));
+        venda.atualizaTotal(precoAlterar);
+        vendaRepository.salva(venda);
+        log.info("[finish] VendaApplicationService - cenarioAdicionaQuantidade");
+    }
+
     //< - Verificações - >
+
+    private void verificaQuantidadeEstoque(Integer idProduto, Integer quantidadeAlterar) {
+        Produto produto = produtoRepository.buscaProduto(idProduto);
+        if (produto.getEstoque() >= quantidadeAlterar) {
+            produto.alteraEstoque(quantidadeAlterar);
+            produtoRepository.salvaProduto(produto);
+        } else {
+            throw APIException.build(HttpStatus.BAD_REQUEST, "Quantidade para adicionar maior que a disponível no estoque!");
+        }
+    }
+
+
+    public ItemVenda encontraItemComMesmoProduto(@NotNull Integer idProduto, Venda venda) {
+        log.info("[start] VendaApplicationService - encontraItemComMesmoProduto");
+        if (venda.getItens() == null || venda.getItens().isEmpty()) {
+            throw APIException.build(HttpStatus.BAD_REQUEST, "A venda não possui itens!");
+        }
+        log.info("ID do produto na requisição: {}", idProduto);
+
+        ItemVenda itemEncontrado = venda.getItens().stream()
+                .filter(item -> item.getIdProduto().equals(idProduto))
+                .findFirst()
+                .orElseThrow(() -> APIException.build(HttpStatus.NOT_FOUND, "Produto para alterar não encontrado na venda!"));
+        log.info("[finish] VendaApplicationService - encontraItemComMesmoProduto");
+
+        return itemEncontrado;
+    }
 
     private void devolveEstoqueItensDeletados(List<ItemVenda> itens) {
         itens.forEach(item -> {
@@ -178,9 +261,11 @@ public class VendaApplicationService implements VendaService {
     }
 
     private void verificaVendaAberta(Venda venda) {
+        log.info("[start] VendaApplicationService - verificaVendaAberta");
         if (venda.getStatusVenda().equals(StatusVenda.FECHADA)) {
             throw APIException.build(HttpStatus.NOT_FOUND, "Venda fechada!.");
         }
+        log.info("[finish] VendaApplicationService - verificaVendaAberta");
     }
 
     private void verificaLimiteAdd(BigDecimal totalComprasAposFechamento, List<ItemVenda> itensDaVenda, @NotNull BigDecimal limiteCompra, BigDecimal precoProduto) {
