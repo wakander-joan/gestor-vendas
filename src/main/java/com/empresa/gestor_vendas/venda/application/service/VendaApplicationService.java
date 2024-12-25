@@ -159,7 +159,6 @@ public class VendaApplicationService implements VendaService {
     public void alteraQuantidadeItem(ItemVendaRequets itemVendaRequets, UUID idVenda) {
         log.info("[start] VendaApplicationService - alteraQuantidadeItem");
         Venda venda = vendaRepository.buscaVenda(idVenda);
-        log.info("Itens da venda: {}", venda.getItens());
         log.info("ID do produto na requisição: {}", itemVendaRequets.getIdProduto());
         verificaVendaAberta(venda);
         ItemVenda item = encontraItemComMesmoProduto(itemVendaRequets.getIdProduto(), venda);
@@ -227,7 +226,6 @@ public class VendaApplicationService implements VendaService {
         if (venda.getItens() == null || venda.getItens().isEmpty()) {
             throw APIException.build(HttpStatus.BAD_REQUEST, "A venda não possui itens!");
         }
-        log.info("Itens da venda: {}", venda.getItens());
         log.info("ID do produto na requisição: {}", idProduto);
 
         ItemVenda itemEncontrado = venda.getItens().stream()
