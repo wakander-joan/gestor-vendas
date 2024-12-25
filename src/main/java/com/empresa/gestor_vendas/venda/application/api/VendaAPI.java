@@ -52,6 +52,6 @@ public interface VendaAPI {
 
     @PatchMapping("/alteraItem/{idVenda}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    void alteraQuantidadeItem(ItemVendaRequets itemVendaRequets, @PathVariable UUID idVenda);
+    void alteraQuantidadeItem(@Valid @RequestBody ItemVendaRequets itemVendaRequets, @PathVariable UUID idVenda);
 
 }

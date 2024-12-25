@@ -74,6 +74,7 @@ public class VendaController implements VendaAPI {
     @Override
     public void alteraQuantidadeItem(ItemVendaRequets itemVendaRequets, UUID idVenda) {
         log.info("[start] VendaController - alteraQuantidadeItem");
+        vendaService.alteraQuantidadeItem(itemVendaRequets,idVenda);
         log.info("[finish] VendaController - alteraQuantidadeItem");
     }
 }

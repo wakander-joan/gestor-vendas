@@ -40,5 +40,4 @@ public class ItemVenda {
         item.setVenda(venda);
         return item;
     }
-
 }

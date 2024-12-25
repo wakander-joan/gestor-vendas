@@ -3,7 +3,6 @@ package com.empresa.gestor_vendas.venda.domain;
 import com.empresa.gestor_vendas.venda.application.api.dto.VendaRequest;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -74,8 +73,17 @@ public class Venda {
         itens.remove(item);
     }
 
-    public void atualizaTotalSubtraindo(@NotNull BigDecimal preco, @Min(value = 1, message = "A quantidade deve ser no mínimo 1") Integer quantidadeRemovida) {
-        BigDecimal valorSubtraido = preco.multiply(BigDecimal.valueOf(quantidadeRemovida));
-        this.valorTotal = this.valorTotal.subtract(valorSubtraido);
+    public void atualizaTotalSubtraindo(@NotNull BigDecimal preco) {
+        this.valorTotal = this.valorTotal.subtract(preco);
+    }
+
+    public void alteraQuantidadeItemVenda(Integer idProduto, int novaQuantidade) {
+        // Encontra o item correspondente ao idProduto
+        ItemVenda itemEncontrado = this.itens.stream()
+                .filter(item -> item.getIdProduto().equals(idProduto))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Item com o produto fornecido não encontrado na venda."));
+
+        itemEncontrado.setQuantidade(novaQuantidade);
     }
 }
