@@ -70,4 +70,10 @@ public class VendaController implements VendaAPI {
         vendaService.deletaVenda(idVenda);
         log.info("[finish] VendaController - deletaVenda");
     }
+
+    @Override
+    public void alteraQuantidadeItem(ItemVendaRequets itemVendaRequets, UUID idVenda) {
+        log.info("[start] VendaController - alteraQuantidadeItem");
+        log.info("[finish] VendaController - alteraQuantidadeItem");
+    }
 }

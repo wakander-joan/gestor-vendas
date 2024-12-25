@@ -1,6 +1,9 @@
 package com.empresa.gestor_vendas.venda.application.api;
 
-import com.empresa.gestor_vendas.venda.application.api.dto.*;
+import com.empresa.gestor_vendas.venda.application.api.dto.ItemVendaRequets;
+import com.empresa.gestor_vendas.venda.application.api.dto.RemoveItemRequets;
+import com.empresa.gestor_vendas.venda.application.api.dto.VendaRequest;
+import com.empresa.gestor_vendas.venda.application.api.dto.VendaResponse;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -16,23 +19,23 @@ public interface VendaAPI {
 
     @PostMapping("/abreVenda")
     @ResponseStatus(code = HttpStatus.CREATED)
-    VendaResponse abreVenda (@Valid @RequestBody VendaRequest vendaRequest);
+    VendaResponse abreVenda(@Valid @RequestBody VendaRequest vendaRequest);
 
     @PatchMapping("/fechaVenda/{idVenda}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    void fechaVenda( @PathVariable UUID idVenda);
+    void fechaVenda(@PathVariable UUID idVenda);
 
     @PostMapping("/addItemVenda/{idVenda}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    void addItemVenda (@Valid @RequestBody ItemVendaRequets itemVendaRequets, @PathVariable UUID idVenda);
+    void addItemVenda(@Valid @RequestBody ItemVendaRequets itemVendaRequets, @PathVariable UUID idVenda);
 
     @DeleteMapping("/removeItemVenda/{idVenda}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    void removeItemVenda (@Valid @RequestBody RemoveItemRequets removeItemRequets, @PathVariable UUID idVenda);
+    void removeItemVenda(@Valid @RequestBody RemoveItemRequets removeItemRequets, @PathVariable UUID idVenda);
 
     @GetMapping("/buscaVenda/{idVenda}")
     @ResponseStatus(code = HttpStatus.OK)
-    VendaDetalhadaResponse buscaVenda (@PathVariable UUID idVenda);
+    VendaDetalhadaResponse buscaVenda(@PathVariable UUID idVenda);
 
     @GetMapping("/filtro")
     @ResponseStatus(code = HttpStatus.OK)
@@ -45,6 +48,10 @@ public interface VendaAPI {
 
     @DeleteMapping("/deletaVenda/{idVenda}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    void deletaVenda (@PathVariable UUID idVenda);
+    void deletaVenda(@PathVariable UUID idVenda);
+
+    @PatchMapping("/alteraItem/{idVenda}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    void alteraQuantidadeItem(ItemVendaRequets itemVendaRequets, @PathVariable UUID idVenda);
 
 }
